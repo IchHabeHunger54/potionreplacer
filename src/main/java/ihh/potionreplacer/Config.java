@@ -3,6 +3,7 @@ package ihh.potionreplacer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -27,7 +28,9 @@ public class Config {
             List<MobEffectInstance> list = new ArrayList<>();
             for (JsonElement element : entry.getValue().getAsJsonArray()) {
                 JsonObject object = element.getAsJsonObject();
-                list.add(new MobEffectInstance(ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(object.get("id").getAsString())), getOrDefault(object, "duration", 0), getOrDefault(object, "amplifier", 0)));
+                MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(object.get("id").getAsString()));
+                if (effect == null) continue;
+                list.add(new MobEffectInstance(effect, getOrDefault(object, "duration", 0), getOrDefault(object, "amplifier", 0)));
             }
             result.put(ForgeRegistries.POTIONS.getValue(new ResourceLocation(entry.getKey())), list);
         }
